@@ -1,9 +1,26 @@
 /*
- * lcd.h
+ ******************************************************************************
+ * @file    lcd.h
+ * @author  Sofiane AOUCI
+ * @date 	Oct 19, 2020
+ * @brief   This file contains all the functions prototypes and declarations
+ * 			for the RA8875 Display Controller
+ ******************************************************************************
+ *****************	Copyright (C) Toulouse III University	*******************
  *
- *  Created on: Oct 19, 2020
- *      Author: SofianeAOUCI
- */
+ *   This program is a free software: you can redistribute it and/or modify it
+ *   under the terms of the GNU General Public License as published by the Free
+ *   Software Foundation, either version 3 of the License, or any later version.
+ *
+ *   This program is distributed in the hope that it will be useful, but WITHOUT
+ *   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ *   more details.
+ *                   <http://www.gnu.org/licenses/>.
+ *
+ *******************************************************************************
+*/
+
 
 #ifndef INC_LCD_H_
 #define INC_LCD_H_
@@ -96,8 +113,8 @@
 #define RA8875_VPWR_LOW         0x00
 #define RA8875_VPWR_HIGH        0x80
 
-#define RA8875_DPCR             0x20 // Display Configuration Register
-#define RA8875_FNCR1            0x22 //Font Control Register 1
+#define RA8875_DPCR             0x20
+#define RA8875_FNCR1            0x22
 
 #define RA8875_HSAW0            0x30
 #define RA8875_HSAW1            0x31
@@ -232,7 +249,6 @@
 #define RA8875_INTC2_BTE        0x02
 
 
-#define _rotation  1 // landscape is default
 #define _tft_width 800
 #define _tft_height 480
 
@@ -244,7 +260,7 @@ void writeCMD(uint16_t DATA);
 uint16_t readReg(uint16_t CMD);
 
 void LCD_init();
-uint8_t LCD_waitPoll(uint8_t regname, uint8_t waitflag);
+void LCD_waitPoll(uint8_t regname, uint8_t waitflag);
 uint8_t LCD_isBusy(uint8_t regname, uint8_t waitflag);
 void LCD_backlight(uint8_t on);
 void LCD_graphicsMode(void);
@@ -261,4 +277,5 @@ void LCD_drawBuffer(uint16_t *p, int16_t x, int16_t y, uint32_t w, uint32_t h);
 /*void LCD_TP_init();
 uint8_t LCD_TP_isTouched();*/
 uint8_t LCD_resetIRQFlags();
+
 #endif /* INC_LCD_H_ */

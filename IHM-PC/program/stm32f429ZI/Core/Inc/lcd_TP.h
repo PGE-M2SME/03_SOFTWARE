@@ -1,9 +1,27 @@
 /*
- * lcd_TP.h
+ ******************************************************************************
+ * @file    lcd_TP.h
+ * @author  Sofiane AOUCI
+ * @date 	Oct 25, 2020
+ * @brief   This file contains all the functions prototypes and declarations
+ * 			for the GT811 Touch Panel Controller
+ ******************************************************************************
+ *****************	Copyright (C) Toulouse III University	*******************
  *
- *  Created on: Oct 25, 2020
- *      Author: SofianeAOUCI
- */
+ *   This program is a free software: you can redistribute it and/or modify it
+ *   under the terms of the GNU General Public License as published by the Free
+ *   Software Foundation, either version 3 of the License, or any later version.
+ *
+ *   This program is distributed in the hope that it will be useful, but WITHOUT
+ *   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ *   more details.
+ *                   <http://www.gnu.org/licenses/>.
+ *
+ *******************************************************************************
+*/
+
+
 
 #ifndef INC_LCD_TP_H_
 #define INC_LCD_TP_H_

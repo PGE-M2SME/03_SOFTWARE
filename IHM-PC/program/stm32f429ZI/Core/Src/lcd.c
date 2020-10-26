@@ -1,14 +1,30 @@
 /*
- * LCD.c
+ ******************************************************************************
+ * @file    lcd.c
+ * @author  Sofiane AOUCI
+ * @date 	Oct 19, 2020
+ * @brief   This file contains all the functions prototypes and declarations
+ * 			for the RA8875 Display Controller
+ ******************************************************************************
+ *****************	Copyright (C) Toulouse III University	*******************
  *
- *  Created on: Oct 19, 2020
- *      Author: SofianeAOUCI
- */
+ *   This program is a free software: you can redistribute it and/or modify it
+ *   under the terms of the GNU General Public License as published by the Free
+ *   Software Foundation, either version 3 of the License, or any later version.
+ *
+ *   This program is distributed in the hope that it will be useful, but WITHOUT
+ *   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ *   more details.
+ *                   <http://www.gnu.org/licenses/>.
+ *
+ *******************************************************************************
+*/
 
 
 #include "lcd.h"
 
-#define LCD_CMD *((volatile uint16_t *) 0x60100000)  // ST datasheet RM0090 page 1608   0x6 [bank1] and 0x0100000 [HDDR<<1]
+#define LCD_CMD *((volatile uint16_t *) 0x60100000)  // ST datasheet RM0090 page 1608   0x6 [bank1] and 0x0100000 [HDDR<<1] corresponding to the A19 bit
 #define LCD_DATA *((volatile uint16_t *) 0x60000000)
 
 void writeReg(uint16_t CMD, uint16_t DATA){
@@ -31,6 +47,7 @@ uint16_t readReg(uint16_t CMD){
 
 void LCD_init(){
 
+	 /* Hardware Reset */
 	  HAL_GPIO_WritePin(FMC_RST_GPIO_Port, FMC_RST_Pin, 1);
 	  HAL_Delay(100);
 	  HAL_GPIO_WritePin(FMC_RST_GPIO_Port, FMC_RST_Pin, 0);
@@ -38,12 +55,13 @@ void LCD_init(){
 	  HAL_GPIO_WritePin(FMC_RST_GPIO_Port, FMC_RST_Pin, 1);
 	  HAL_Delay(100);
 
-
+	 /* PLL config */
 	  writeReg(RA8875_PLLC1, RA8875_PLLC1_PLLDIV1 + 11);
 	  HAL_Delay(1);
 	  writeReg(RA8875_PLLC2, RA8875_PLLC2_DIV4);
 	  HAL_Delay(1);
-	  //writeReg(RA8875_SYSR, RA8875_SYSR_16BPP | RA8875_SYSR_MCU8);
+
+	 /* configure MCU interface and color format : 16bit mcu + rgb565 */
 	  writeReg(RA8875_SYSR, RA8875_SYSR_16BPP | RA8875_SYSR_MCU16);
 
 	  /* Timing values */
@@ -97,6 +115,8 @@ void LCD_init(){
 	  writeReg(RA8875_VEAW0, (uint16_t)(_tft_height - 1) & 0xFF);           // horizontal end point
 	  writeReg(RA8875_VEAW1, (uint16_t)(_tft_height - 1) >> 8);
 
+
+	  /* Interrupts config */
 	  writeReg(RA8875_INTC1, 3);
 
 	  /* Clear the entire window */
@@ -109,27 +129,23 @@ void LCD_init(){
 	  writeData((0xffff & 0x001f));
 	  writeReg(RA8875_MCLR, RA8875_MCLR_START | RA8875_MCLR_FULL);
 	  HAL_Delay(500);
+
+	  /* power ON */
 	  writeReg(RA8875_PWRR, RA8875_PWRR_NORMAL | RA8875_PWRR_DISPON);
-	  //writeReg(RA8875_GPIOX, 1);
-	  //writeReg(RA8875_P1CR, RA8875_P1CR_ENABLE | (RA8875_PWM_CLK_DIV1024 & 0xF));
-	 // writeReg(RA8875_P1DCR, 255);
+	  /* set graphics mode */
 	  LCD_graphicsMode();
 
 }
 
-uint8_t LCD_waitPoll(uint8_t regname, uint8_t waitflag) {
+void LCD_waitPoll(uint8_t regname, uint8_t waitflag) {
   /* Wait for the command to finish */
 	uint8_t temp = 0;
-	while (1) {
+	do {
     temp = readReg(regname);
-    if (!(temp & waitflag))
-      return 1;
-  }
-  return 0; // MEMEFIX: yeah i know, unreached! - add timeout?
+  } while(temp & waitflag);
 }
 
 uint8_t LCD_isBusy(uint8_t regname, uint8_t waitflag) {
-  /* Wait for the command to finish */
 	uint8_t temp = readReg(regname);
     return (temp & waitflag);
 }
@@ -149,7 +165,7 @@ void LCD_graphicsMode(void) {
 void LCD_ClearDisplay(uint16_t color){
 	LCD_setBackgroundColor(color);
 	writeReg(RA8875_MCLR, RA8875_MCLR_START | RA8875_MCLR_FULL);
-	while(!LCD_waitPoll(RA8875_MCLR, RA8875_MCLR_READSTATUS));
+	LCD_waitPoll(RA8875_MCLR, RA8875_MCLR_READSTATUS);
 }
 
 void LCD_drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color, uint8_t filled) {
@@ -229,7 +245,7 @@ void LCD_BTE(int16_t xS, int16_t yS, int16_t xD, int16_t yD, int16_t w, int16_t 
 
 }
 
-/* FLASH ROM ---------------------------------------------------------*/
+/* DRAWING ---------------------------------------------------------*/
 
 void LCD_DrawPixels(uint16_t *p, uint32_t num, int16_t x, int16_t y) {
 
