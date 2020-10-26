@@ -17,9 +17,23 @@
 #include <TouchGFXHAL.hpp>
 
 /* USER CODE BEGIN TouchGFXHAL.cpp */
+
 #include "stm32f4xx.h"
-#include <string.h>
+
 using namespace touchgfx;
+
+/* ******************************************************
+ * Functions required by Partial Frame Buffer Strategy
+ * ******************************************************
+ *
+ *  int touchgfxDisplayDriverTransmitActive() must return whether or not data is currently being transmitted, over e.g. SPI.
+ *  void touchgfxDisplayDriverTransmitBlock(const uint8_t* pixels, uint16_t x, uint16_t y, uint16_t w, uint16_t h) will be called
+ *  when the framework wants to send a block. The user must then transfer the data represented by the arguments.
+ *
+ *  A user must call touchgfx::startNewTransfer(); once touchgfxDisplayDriverTransmitBlock() has successfully sent a block.
+ *  E.g. if using DMA to transfer the block, this could be called in the "Transfer Completed" interrupt handler.
+ *
+ */
 
 void TouchGFXHAL::initialize()
 {
@@ -30,7 +44,6 @@ void TouchGFXHAL::initialize()
     // Please note, HAL::initialize() must be called to initialize the framework.
 
     TouchGFXGeneratedHAL::initialize();
-
 }
 
 /**
@@ -78,11 +91,8 @@ void TouchGFXHAL::flushFrameBuffer(const touchgfx::Rect& rect)
     // and implemented needed functionality here.
     // Please note, HAL::flushFrameBuffer(const touchgfx::Rect& rect) must
     // be called to notify the touchgfx framework that flush has been performed.
-	//memset(getClientFrameBuffer(),0x0f,sizeof(uint16_t)*200*200);
-	//LCD_drawBuffer(getClientFrameBuffer(), rect.x, rect.y, rect.width, rect.height);
 
-		TouchGFXGeneratedHAL::flushFrameBuffer(rect);
-
+    TouchGFXGeneratedHAL::flushFrameBuffer(rect);
 }
 
 bool TouchGFXHAL::blockCopy(void* RESTRICT dest, const void* RESTRICT src, uint32_t numBytes)

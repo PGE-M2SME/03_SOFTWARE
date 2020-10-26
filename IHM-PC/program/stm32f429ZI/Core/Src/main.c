@@ -9,10 +9,10 @@
   * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
   *
   ******************************************************************************
   */
@@ -31,7 +31,6 @@
 /* USER CODE BEGIN Includes */
 #include "lcd.h"
 #include "lcd_TP.h"
-#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,13 +50,13 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-extern void touchgfxSignalVSync();
-extern void	DisplayDriver_TransferCompleteCallback();
+extern void DisplayDriver_TransferCompleteCallback();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -88,7 +87,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  SystemCoreClockUpdate();
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -102,27 +101,19 @@ int main(void)
   MX_TouchGFX_Init();
   /* USER CODE BEGIN 2 */
   LCD_init();
-  HAL_Delay(500);
-  LCD_backlight(1);
-  LCD_graphicsMode();
   LCD_TP_init();
   HAL_TIM_Base_Start_IT(&htim7);
   HAL_TIM_Base_Start_IT(&htim6);
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  //touchgfxSignalVSync();
-	  //HAL_Delay(16);
-	  //touchgfxSignalVSync();
     /* USER CODE END WHILE */
 
   MX_TouchGFX_Process();
     /* USER CODE BEGIN 3 */
-
   }
   /* USER CODE END 3 */
 }
@@ -178,17 +169,12 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 int touchgfxDisplayDriverTransmitActive(){
-	if(!LCD_waitPoll(0x50, 0x80)) return 1;
-	return 0;
-
+	return LCD_isBusy(0x50, 0x80);
 }
 void touchgfxDisplayDriverTransmitBlock(const uint8_t* pixels, uint16_t x, uint16_t y, uint16_t w, uint16_t h){
-	LCD_drawBuffer((uint16_t *)pixels, x, y, w, h);
+	LCD_drawBuffer((uint16_t*)pixels, x, y, w, h);
 	DisplayDriver_TransferCompleteCallback();
 }
-
-
-
 /* USER CODE END 4 */
 
 /**

@@ -1,7 +1,7 @@
 
 {
   "Application": {
-    "Name": "test_7inch",
+    "Name": "test_7inch_RE",
     "TouchGfxPath": "../Middlewares/ST/touchgfx",
     "AvailableColorDepths": [ 16 ],
     "AvailableLCDs":
@@ -14,7 +14,7 @@
         "Height": 480
       }
     ],
-    "PostGenerateTargetCommand" : "touchgfx update_project --project-file=../test_7inch.ioc --platform=m4",
+    "PostGenerateTargetCommand" : "touchgfx update_project --project-file=../test_7inch_RE.ioc --platform=m4",
     "Family" : "STM32F4"
   },
   "Version": "4.15.0"

@@ -113,6 +113,7 @@ void LCD_init(){
 	  //writeReg(RA8875_GPIOX, 1);
 	  //writeReg(RA8875_P1CR, RA8875_P1CR_ENABLE | (RA8875_PWM_CLK_DIV1024 & 0xF));
 	 // writeReg(RA8875_P1DCR, 255);
+	  LCD_graphicsMode();
 
 }
 
@@ -125,6 +126,12 @@ uint8_t LCD_waitPoll(uint8_t regname, uint8_t waitflag) {
       return 1;
   }
   return 0; // MEMEFIX: yeah i know, unreached! - add timeout?
+}
+
+uint8_t LCD_isBusy(uint8_t regname, uint8_t waitflag) {
+  /* Wait for the command to finish */
+	uint8_t temp = readReg(regname);
+    return (temp & waitflag);
 }
 
 void LCD_backlight(uint8_t on){

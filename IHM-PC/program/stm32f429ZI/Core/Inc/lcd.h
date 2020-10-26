@@ -245,6 +245,7 @@ uint16_t readReg(uint16_t CMD);
 
 void LCD_init();
 uint8_t LCD_waitPoll(uint8_t regname, uint8_t waitflag);
+uint8_t LCD_isBusy(uint8_t regname, uint8_t waitflag);
 void LCD_backlight(uint8_t on);
 void LCD_graphicsMode(void);
 void LCD_ClearDisplay(uint16_t color);

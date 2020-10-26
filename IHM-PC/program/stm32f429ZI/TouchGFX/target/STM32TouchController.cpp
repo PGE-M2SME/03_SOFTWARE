@@ -18,9 +18,9 @@
 /* USER CODE BEGIN STM32TouchController */
 
 #include <STM32TouchController.hpp>
-#include <touchgfx/hal/HAL.hpp>
 
-volatile int screenTouched[3] = {0};
+
+volatile unsigned touchScreenDetected[3] = {0};
 
 void STM32TouchController::init()
 {
@@ -42,11 +42,10 @@ bool STM32TouchController::sampleTouch(int32_t& x, int32_t& y)
      * By default sampleTouch is called every tick, this can be adjusted by HAL::setTouchSampleRate(int8_t);
      *
      */
-
-	if(screenTouched[0]){
-		screenTouched[0] = 0;
-		x = screenTouched[2];
-		y = screenTouched[1];
+	if(touchScreenDetected[0]){
+		x = touchScreenDetected[2];
+		y = touchScreenDetected[1];
+		touchScreenDetected[0] = 0;
 		return true;
 	}
     return false;

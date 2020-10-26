@@ -12,7 +12,7 @@ public:
     {
         modelListener = listener;
     }
-    int getCurrentcircleValue() const { return currentCircleValue; }
+
     void tick();
 protected:
     ModelListener* modelListener;

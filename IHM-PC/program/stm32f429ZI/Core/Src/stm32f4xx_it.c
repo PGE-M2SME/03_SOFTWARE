@@ -9,10 +9,10 @@
   * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
   *
   ******************************************************************************
   */
@@ -23,7 +23,6 @@
 #include "stm32f4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "lcd.h"
 #include "lcd_TP.h"
 /* USER CODE END Includes */
 
@@ -49,7 +48,7 @@
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
-extern void touchgfxSignalVSync();
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -63,9 +62,10 @@ extern I2C_HandleTypeDef hi2c1;
 extern TIM_HandleTypeDef htim6;
 extern TIM_HandleTypeDef htim7;
 /* USER CODE BEGIN EV */
+extern volatile unsigned touchScreenDetected[3];
 extern volatile int circleValueUpdate;
 extern volatile int circleValueReset;
-extern volatile int screenTouched[3];
+extern void touchgfxSignalVSync(void);
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -210,9 +210,10 @@ void SysTick_Handler(void)
 void EXTI9_5_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI9_5_IRQn 0 */
-	screenTouched[0] = LCD_TP_getStatus();
-	LCD_TP_getT1((uint16_t*)&screenTouched[1], (uint16_t*)&screenTouched[2]);
-	screenTouched[0] = 1;
+	if(LCD_TP_getStatus()){
+		touchScreenDetected[0] = 1;
+		LCD_TP_getT1((uint16_t*) &touchScreenDetected[1], (uint16_t*) &touchScreenDetected[2]);
+	}
   /* USER CODE END EXTI9_5_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_6);
   /* USER CODE BEGIN EXTI9_5_IRQn 1 */
@@ -255,8 +256,8 @@ void TIM6_DAC_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
 	static uint32_t count = 0;
-	if(++count % 50 == 0)
-		circleValueUpdate = 1;
+		if(++count % 50 == 0)
+			circleValueUpdate = 1;
   /* USER CODE END TIM6_DAC_IRQn 0 */
   HAL_TIM_IRQHandler(&htim6);
   /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
@@ -284,7 +285,7 @@ void TIM7_IRQHandler(void)
 void DMA2D_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA2D_IRQn 0 */
-	//touchgfxSignalVSync();
+
   /* USER CODE END DMA2D_IRQn 0 */
   HAL_DMA2D_IRQHandler(&hdma2d);
   /* USER CODE BEGIN DMA2D_IRQn 1 */
