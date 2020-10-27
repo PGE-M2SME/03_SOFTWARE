@@ -1,1 +1,1 @@
-# PGE Software : IHM 
+# PGE Software
