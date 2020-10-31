@@ -24,6 +24,8 @@ And we thought this might help us select the tools we will use for the project.
 ## Software tools
 - TouchGFX for GUI development
 
+## Functional Block Diagram
+![functional block diagram](HW.png)
 ## Aditional informations
 For more details about how to :
 - Setup the project on your own IDE
